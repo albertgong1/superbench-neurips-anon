@@ -17,7 +17,7 @@ so Harbor can pull tasks directly from the Hub.
 Example usage:
 
 uv run python prepare_harbor_tasks.py --templates-dir targeted-stoichiometric-template --force \
-    --gt-hf-repo kilian-group/supercon-extraction --gt-hf-split full --gt-hf-revision v0.0.0
+    --gt-hf-repo anonymous-org/supercon-extraction --gt-hf-split full --gt-hf-revision v0.0.0
 
 """
 
@@ -228,7 +228,7 @@ def main() -> None:
         "--gt-hf-repo",
         type=str,
         required=False,
-        help="Hugging Face repo name for ground truth dataset (e.g., kilian-group/supercon-extraction).",
+        help="Hugging Face repo name for ground truth dataset (e.g., anonymous-org/supercon-extraction).",
     )
     parser.add_argument(
         "--gt-hf-split",

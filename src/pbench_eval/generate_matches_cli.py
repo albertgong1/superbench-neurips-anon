@@ -8,7 +8,7 @@ Example usage:
 ```bash
 uv run pbench-generate-matches \
     --output_dir ./out \
-    --hf_repo kilian-group/supercon-extraction \
+    --hf_repo anonymous-org/supercon-extraction \
     --hf_split full \
     --prompt_path prompts/property_matching_prompt.md \
     --model_name gemini-3-pro-preview

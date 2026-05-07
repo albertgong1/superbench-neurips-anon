@@ -36,7 +36,7 @@ The domain is defined by the dataset + template. The dataset must contain rows w
 - `properties`: list of dicts with `property_name`, `material_or_system`, `value_string`
 
 For example:
-- Superconductor extraction uses `kilian-group/supercon-mini-v2`
+- Superconductor extraction uses `anonymous-org/supercon-mini-v2`
 - Biosurfactants extraction uses a different template and dataset
 - Precedent search uses a different template and scoring logic
 
@@ -49,7 +49,7 @@ Templates live in `examples/harbor-workspace/`:
 Build tasks for all properties with the default template (no task alias needed):
 ```bash
 uv run python src/harbor-task-gen/prepare_harbor_tasks.py \
-  --gt-hf-repo kilian-group/supercon-mini-v2 --gt-hf-split full \
+  --gt-hf-repo anonymous-org/supercon-mini-v2 --gt-hf-split full \
   --write-job-config --force
 ```
 Outputs go to `examples/harbor-workspace/out/harbor/supercon-mini-v2/ground-template/`
@@ -285,7 +285,7 @@ TRIAL_DIR=$(ls -td "$WORKSPACE"/trials/* | head -1)
 BUNDLE=$(uv run python src/harbor-task-gen/run_harbor.py compile-run --run-dir "$TRIAL_DIR")
 
 uv run python src/harbor-task-gen/run_harbor.py push-run-to-hf \
-  --repo-id kilian-group/foolmetwice-testing \
+  --repo-id anonymous-org/foolmetwice-testing \
   --bundle-dir "$BUNDLE" \
   --write-root-readme
 ```
@@ -299,7 +299,7 @@ from huggingface_hub import snapshot_download
 from pathlib import Path
 import json
 
-repo_id = "kilian-group/foolmetwice-testing"
+repo_id = "anonymous-org/foolmetwice-testing"
 local = Path(snapshot_download(repo_id=repo_id, repo_type="dataset"))
 
 run = local / "runs" / "<run-name>"

@@ -20,7 +20,7 @@ TODO:
 <details>
     <summary>Instructions for running Harbor on Modal</summary>
 
-* Create a Modal API key at https://modal.com/settings/kilian-group/tokens (email ag2435@cornell.edu to be added to the group) and follow the onscreen instructions to activate it.
+* Create a Modal API key (contact details anonymized for review) and follow the onscreen instructions to activate it.
 
 </details>
 
@@ -38,7 +38,7 @@ TODO:
 
 ```bash
 uv run python ../../src/harbor-task-gen/run_batch_harbor.py jobs start \
-  --hf-tasks-repo kilian-group/supercon-extraction-harbor-tasks --hf-tasks-version v0.0.0 \
+  --hf-tasks-repo anonymous-org/supercon-extraction-harbor-tasks --hf-tasks-version v0.0.0 \
   -a gemini-cli -m gemini/gemini-3-flash-preview \
   --workspace . --jobs-dir JOBS_DIR --seed 1 --batch-size 10
 ```
@@ -63,7 +63,7 @@ uv run pbench-pred-embeddings -jd JOBS_DIR -od OUTPUT_DIR
 
 # Query LLM to determine best match between generated and ground-truth property name:
 uv run pbench-generate-matches -jd JOBS_DIR -od OUTPUT_DIR -m gemini-2.5-flash \
-    --hf_repo kilian-group/supercon-extraction --hf_split full --hf_revision v0.2.1 \
+    --hf_repo anonymous-org/supercon-extraction --hf_split full --hf_revision v0.2.1 \
     --prompt_path prompts/property_matching_prompt.md
 ```
 
@@ -72,7 +72,7 @@ uv run pbench-generate-matches -jd JOBS_DIR -od OUTPUT_DIR -m gemini-2.5-flash \
 1. Please run the following command to generate the predictions:
 
 > \[!IMPORTANT\]
-> Registry and max num papers flags define an ordering to process the big list of papers and a limit. This script assumes that `registry_data.json` exists in this examples subdirectory. Ask ag2435@cornell.edu on Slack for a copy of this file.
+> Registry and max num papers flags define an ordering to process the big list of papers and a limit. This script assumes that `registry_data.json` exists in this examples subdirectory (contact details anonymized for review).
 > Remove these flags to process the full dataset in DATA_DIR=data.
 
 ```bash
@@ -88,7 +88,7 @@ uv run pbench-pred-embeddings -od OUTPUT_DIR
 
 # Query LLM to determine best match between generated and ground-truth property name:
 uv run pbench-generate-matches -od OUTPUT_DIR -m gemini-2.5-flash \
-    --hf_repo kilian-group/supercon-extraction --hf_split full --hf_revision v0.2.1 \
+    --hf_repo anonymous-org/supercon-extraction --hf_split full --hf_revision v0.2.1 \
     --prompt_path prompts/property_matching_prompt.md
 ```
 
@@ -135,7 +135,7 @@ uv run pbench-aggregate -od OUTPUT_DIR -m gemini-2.5-flash \
 
 ## Constructing the Dataset
 
-1. Download the following from Google Drive (email ag2435@cornell.edu for access) and place in `DATA_DIR/Paper_DB`.
+1. Download the following from Google Drive (contact details anonymized for review) and place in `DATA_DIR/Paper_DB`.
 
 * Link: [Google Drive Folder](https://drive.google.com/drive/folders/1Kk6kZAzgLMNlmlsKPJcvqCoW5_IVuQKb?usp=sharing). Contains 1339 PDFs.
 
@@ -168,7 +168,7 @@ mkdir -p data && tar -xvf Paper_DB.tar -C DATA_DIR
 uv run python generate_property_unit_mappings.py
 ```
 
-4. Create a local HuggingFace dataset `OUTPUT_DIR/SPLIT` for the papers that have PDFS in `DATA_DIR/Paper_DB`. Note: the dataset will also be shared at https://huggingface.co/datasets/kilian-group/supercon-extraction.
+4. Create a local HuggingFace dataset `OUTPUT_DIR/SPLIT` for the papers that have PDFS in `DATA_DIR/Paper_DB`. Note: the dataset will also be shared at https://huggingface.co/datasets/anonymous-org/supercon-extraction.
 
 > \[!NOTE\]
 > Replace `SPLIT` with `lite` or `full` depending on the version of the dataset you want to create.
@@ -176,13 +176,13 @@ uv run python generate_property_unit_mappings.py
 
 ```bash
 uv run python create_huggingface_dataset.py -dd data-arxiv -od out-0122-harbor --filter_pdf \
-    --hf_revision v0.2.1 --hf_repo kilian-group/supercon-extraction --hf_split full
+    --hf_revision v0.2.1 --hf_repo anonymous-org/supercon-extraction --hf_split full
 ```
 
 5. Generate embeddings for the ground-truth property names for scoring:
 
 ```bash
-uv run pbench-gt-embeddings --hf_repo kilian-group/supercon-extraction --hf_revision v0.2.1 --hf_split full
+uv run pbench-gt-embeddings --hf_repo anonymous-org/supercon-extraction --hf_revision v0.2.1 --hf_split full
 ```
 
 <!-- Old command (deprecated):
@@ -191,13 +191,13 @@ uv run python generate_gt_embeddings.py
 ```
 -->
 
-6. Create the Harbor tasks at `OUTPUT_DIR` by instantiating the Harbor template with the papers in `DATA_DIR/Paper_DB`. Note: the tasks will also be shared at https://huggingface.co/datasets/kilian-group/supercon-extraction-harbor-tasks.
+6. Create the Harbor tasks at `OUTPUT_DIR` by instantiating the Harbor template with the papers in `DATA_DIR/Paper_DB`. Note: the tasks will also be shared at https://huggingface.co/datasets/anonymous-org/supercon-extraction-harbor-tasks.
 
 ```bash
 uv run python ../../src/harbor-task-gen/prepare_harbor_tasks.py \
     --pdf-dir DATA_DIR/Paper_DB --output-dir OUTPUT_DIR --workspace . --template targeted-template \
-    --gt-hf-repo kilian-group/supercon-extraction --gt-hf-split SPLIT --gt-hf-revision main \
-    --force --upload-hf --hf-repo-id kilian-group/supercon-extraction-harbor-tasks --hf-repo-type dataset --hf-dataset-version v0.2.0
+    --gt-hf-repo anonymous-org/supercon-extraction --gt-hf-split SPLIT --gt-hf-revision main \
+    --force --upload-hf --hf-repo-id anonymous-org/supercon-extraction-harbor-tasks --hf-repo-type dataset --hf-dataset-version v0.2.0
 ```
 
 **Stoichiometric variant of prompt:**
@@ -205,5 +205,5 @@ uv run python ../../src/harbor-task-gen/prepare_harbor_tasks.py \
 ```bash
 uv run python ../../src/harbor-task-gen/prepare_harbor_tasks.py \
     --pdf-dir data-arxiv/Paper_DB --output-dir out-0121-harbor --workspace . --template targeted-stoichiometric-template \
-    --gt-hf-repo kilian-group/supercon-extraction --gt-hf-split full --gt-hf-revision main --force
+    --gt-hf-repo anonymous-org/supercon-extraction --gt-hf-split full --gt-hf-revision main --force
 ```

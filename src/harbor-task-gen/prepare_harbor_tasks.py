@@ -24,7 +24,7 @@ repository stays clean until you build.
 
 Example (from repo root):
     uv run python src/harbor-task-gen/prepare_harbor_tasks.py --task tc --force \
-      --gt-hf-repo kilian-group/supercon-extraction --gt-hf-split full --gt-hf-revision v0.0.0
+      --gt-hf-repo anonymous-org/supercon-extraction --gt-hf-split full --gt-hf-revision v0.0.0
     uv run python src/harbor-task-gen/run_harbor.py jobs start \
       --registry out/harbor/supercon-extraction/tc/ground-template/registry.json -a oracle
 
@@ -502,7 +502,7 @@ def main() -> None:
         "--gt-hf-repo",
         type=str,
         required=False,
-        help="Hugging Face repo name for ground truth dataset (e.g., kilian-group/supercon-extraction).",
+        help="Hugging Face repo name for ground truth dataset (e.g., anonymous-org/supercon-extraction).",
     )
     parser.add_argument(
         "--gt-hf-split",

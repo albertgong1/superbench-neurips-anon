@@ -4,7 +4,6 @@
 # Usage: ./scripts/run_simple.sh DATA_DIR OUTPUT_DIR [extra args...]
 #
 # Note: This script uses registry_data.json to define the ordering.
-# Ask ag2435@cornell.edu on Slack for a copy of this file.
 
 # Exit entire script on Ctrl+C
 trap "echo ' Interrupted, exiting...'; exit 130" INT

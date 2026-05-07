@@ -108,7 +108,7 @@ Calculates Precision, Recall, and F1 scores by comparing predictions against Gro
 
 *   **Inputs**:
     *   `--preds`: Path to the predictions CSV (must contain `refno`, `property_name`, `value_string` columns).
-    *   `--gt`: Path to Ground Truth CSV or Hugging Face dataset name (e.g., `albertgong1/sci-llm`).
+    *   `--gt`: Path to Ground Truth CSV or Hugging Face dataset name (e.g., `anonymous-user/sci-llm`).
     *   `--rubric`: Path to `examples/extraction/assets/rubric.csv`.
     *   `--clusters`: (Optional) Path to property clusters JSON.
 *   **Outputs** (in `--output_dir`):

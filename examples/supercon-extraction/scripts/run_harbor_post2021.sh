@@ -51,7 +51,7 @@ for combo in "${combinations[@]}"; do
   for batch in $(seq 1 $NUM_BATCHES); do
     echo "Running batch ${batch}/${NUM_BATCHES}..."
     CMD="uv run python ../../src/harbor-task-gen/run_batch_harbor.py jobs start \
-      --hf-tasks-repo kilian-group/supercon-post-2021-extraction-harbor-tasks --hf-tasks-version head \
+      --hf-tasks-repo anonymous-org/supercon-post-2021-extraction-harbor-tasks --hf-tasks-version head \
       -a ${agent} -m ${model} ${ak_args} \
       --workspace . --jobs-dir ${jobs_dir} --seed 1 --batch-size ${BATCH_SIZE} --batch-number ${batch} $cmd_args"
     echo "Executing: $CMD"

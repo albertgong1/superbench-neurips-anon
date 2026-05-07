@@ -46,7 +46,7 @@ for combo in "${combinations[@]}"; do
 
   CMD="uv run pbench-eval -dd ${data_dir} --server ${server} -m ${model} \
     -pp prompts/targeted_stoic_extraction_prompt.md -od ${output_dir} \
-    --hf_repo kilian-group/supercon-post-2021-extraction --hf_split full --hf_revision v0.0.1 ${extra_args} $cmd_args"
+    --hf_repo anonymous-org/supercon-post-2021-extraction --hf_split full --hf_revision v0.0.1 ${extra_args} $cmd_args"
   echo "Executing: $CMD"
   eval $CMD
 

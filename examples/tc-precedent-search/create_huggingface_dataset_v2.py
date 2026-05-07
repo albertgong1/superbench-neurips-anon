@@ -1,11 +1,8 @@
 import pandas as pd
 
-df = pd.read_csv(
-    "/Users/ag2435/sci_llm/src/sci-llm/examples/Tc/supercon-arxiv.csv", dtype=str
-)
+df = pd.read_csv("examples/Tc/supercon-arxiv.csv", dtype=str)
 
 df = df[df["property_name"].isin(["tc", "tcn"]) & ~df["file"].isna()]
-# import pdb; pdb.set_trace()
 
 df["tc_tcn"] = df.apply(
     lambda row: (
@@ -36,7 +33,4 @@ both = properties["tc_tcn"].apply(
 
 print(properties[both])
 # save to csv
-properties[both].to_csv(
-    "/Users/ag2435/sci_llm/src/sci-llm/examples/Tc/supercon-arxiv-tc-tcn.csv",
-    index=False,
-)
+properties[both].to_csv("examples/Tc/supercon-arxiv-tc-tcn.csv", index=False)

@@ -29,7 +29,7 @@ If you built tasks with `--no-score`, Harbor will skip verification. After the r
 rebuild expected.json from the dataset and score locally:
 ```bash
 uv run python examples/harbor-workspace/score_harbor_results.py \
-  --gt-hf-repo kilian-group/supercon-mini-v2 --gt-hf-split full
+  --gt-hf-repo anonymous-org/supercon-mini-v2 --gt-hf-split full
 ```
 This writes `expected.json`, `reward.txt`, and `details.json` under each trial's
 `verifier/` folder so `collect_harbor_results.py` can consume the outputs.

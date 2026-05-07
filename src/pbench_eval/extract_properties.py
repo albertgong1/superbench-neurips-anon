@@ -250,7 +250,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--dataset",
         type=str,
-        default="kilian-group/supercon-mini-v2",
+        default="anonymous-org/supercon-mini-v2",
         help="Path to Ground Truth CSV or Hugging Face dataset name",
     )
     parser.add_argument(

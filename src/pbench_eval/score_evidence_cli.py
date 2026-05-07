@@ -7,7 +7,7 @@ Example usage:
 ```bash
 uv run pbench-score-evidence \
     --output_dir ./out \
-    --hf_repo kilian-group/supercon-extraction \
+    --hf_repo anonymous-org/supercon-extraction \
     --hf_split full
 ```
 """

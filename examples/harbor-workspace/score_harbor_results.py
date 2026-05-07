@@ -11,7 +11,7 @@ payload from agent logs (e.g., `agent/gemini-cli.txt`) and writes a synthetic
 
 Example:
   uv run python examples/harbor-workspace/score_harbor_results.py \
-    --gt-hf-repo kilian-group/supercon-mini-v2 --gt-hf-split full
+    --gt-hf-repo anonymous-org/supercon-mini-v2 --gt-hf-split full
 
 """
 
@@ -371,8 +371,8 @@ def main() -> int:
     )
     parser.add_argument(
         "--gt-hf-repo",
-        default="kilian-group/supercon-mini-v2",
-        help="Ground-truth dataset repo (default: kilian-group/supercon-mini-v2).",
+        default="anonymous-org/supercon-mini-v2",
+        help="Ground-truth dataset repo (default: anonymous-org/supercon-mini-v2).",
     )
     parser.add_argument(
         "--gt-hf-split",

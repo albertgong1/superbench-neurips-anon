@@ -4,7 +4,7 @@ This script loads a ground-truth dataset from HuggingFace, extracts unique prope
 names, generates embeddings using the Gemini embedding model, and saves them to JSON.
 
 Usage:
-    uv run pbench-gt-embeddings --hf_repo kilian-group/supercon-extraction \
+    uv run pbench-gt-embeddings --hf_repo anonymous-org/supercon-extraction \
         --hf_revision v0.0.0 --hf_split full
 """
 

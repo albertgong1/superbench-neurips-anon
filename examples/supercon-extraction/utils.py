@@ -26,7 +26,7 @@ LINE_ALPHA = 0.75
 OUTWARD = 4
 
 # Dataset configuration
-HF_DATASET_NAME = "kilian-group/supercon-extraction"
+HF_DATASET_NAME = "anonymous-org/supercon-extraction"
 HF_DATASET_REVISION = "main"  # "v0.0.0"
 HF_DATASET_SPLIT = "full"
 GT_EMBEDDINGS_PATH = Path("scoring/gt_property_name_gemini-embedding-001.json")
