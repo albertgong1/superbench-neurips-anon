@@ -18,8 +18,8 @@ And writes a single combined CSV file to: <output_dir>/candidates/extracted_prop
 
 Usage (from within an examples subdirectory):
 ```bash
-# Example: from examples/biosurfactants-extraction/
-cd examples/biosurfactants-extraction
+# Example: from examples/supercon-extraction/
+cd examples/supercon-extraction
 
 # Process with specific output directory
 uv run pbench-filter -od OUTPUT_DIR

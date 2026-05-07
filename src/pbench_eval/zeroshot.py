@@ -10,7 +10,7 @@ The script expects to be run from a directory containing:
 
 Usage:
 ```bash
-# From examples/biosurfactants-extraction/ directory
+# From examples/supercon-extraction/ directory
 uv run pbench-extract \
     --server gemini \
     --model_name gemini-3-pro-preview \

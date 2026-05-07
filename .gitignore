@@ -219,16 +219,12 @@ __marimo__/
 *data*/
 *.tar
 *.zip
-!arxiv/tests/test_data/
 .claude/
 
 *out*/
 
 .idea
-arxiv/artifacts
 *.swp
-arxiv/credentials.json
-arxiv/token.json
 
 *jobs*/
 examples/*/scoring/embeddings*
