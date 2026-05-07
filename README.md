@@ -1,4 +1,4 @@
-# SciLLM
+# Anonymous NeurIPS D&B Submission
 
 ## Getting Started
 

@@ -1,9 +1,5 @@
 # SuperCon Property Extraction
 
-TODO:
-- [ ] Share embeddings on HF.
-- [ ] Fill in "category" field in GT dataset
-
 ## Setup Instructions
 
 1. Follow the setup instructions at [README.md](../../README.md#getting-started).
