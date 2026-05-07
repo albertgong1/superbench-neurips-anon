@@ -20,7 +20,7 @@ OPENAI_API_KEY=xxxxx
 
 For example tasks, see our [SuperCon Extraction task](examples/supercon-extraction/README.md) and [Tc Precedent Search task](examples/tc-precedent-search/README.md).
 
-## Reproducing the ICML figures
+## Reproducing the figures
 
 1. Please follow the steps at [Reproducing SuperCon Extraction Experiments](examples/supercon-extraction/README.md#reproducing-experiments) and [Reproducing Tc Precedent Search Experiments (steps 3--7)](examples/tc-precedent-search/README.md#3-run-trials).
 
