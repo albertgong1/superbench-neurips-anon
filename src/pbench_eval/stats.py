@@ -8,8 +8,7 @@ import numpy as np
 
 
 def padded_sem(x: list, n: int) -> float:
-    """Calculate the standard error of the mean.
-    NOTE: treat missing values as zeros.
+    """Calculate the standard error of the mean (missing values treated as zeros).
 
     Args:
         x: List of sample values
@@ -27,7 +26,7 @@ def padded_sem(x: list, n: int) -> float:
         return 0.0
 
     padded = np.concatenate((x, np.zeros(n_eff - len(x))))
-    return float(np.std(padded, ddof=1) / (n_eff ** 0.5))
+    return float(np.std(padded, ddof=1) / (n_eff**0.5))
 
 
 def padded_mean(x: list, n: int) -> float:

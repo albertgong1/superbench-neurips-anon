@@ -1,9 +1,5 @@
 """Aggregate F1 scores with token usage or cost for property extraction tasks.
 
-Todo:
-- Overlay no agent harness results
-- Add reasoning_effort support
-
 Usage:
     uv run pbench-aggregate-accuracy-tokens --output-dir <OUTPUT_DIR> --x-axis <tokens|cost>
 
@@ -17,7 +13,6 @@ from tabulate import tabulate
 import pbench
 from pbench_eval.cli_utils import add_scoring_args
 from pbench_eval.score_f1_cli import compute_f1_by_refno
-from pbench_eval.score_recall_cli import compute_recall_by_refno
 from pbench_eval.stats import padded_mean, padded_sem
 from pbench_eval.token_utils import (
     collect_harbor_token_usage,
@@ -53,14 +48,8 @@ def aggregate_accuracy_tokens(args: Namespace) -> pd.DataFrame:
             args.output_dir.resolve(),
         )
     # Get F1 scores by refno
-    if True:
-        score_by_refno = compute_f1_by_refno(args)
-        score_name = "f1_score"
-    else:
-        # NOTE: we will use recall as our metric of choice for the property extraction datasets.
-        # F1 no longer makes sense given that we only have Gemini verified positives
-        score_by_refno = compute_recall_by_refno(args)
-        score_name = "recall_score"
+    score_by_refno = compute_f1_by_refno(args)
+    score_name = "f1_score"
     score_by_refno["num_trials"] = score_by_refno.apply(
         lambda row: trials_lookup.get((row["agent"], row["model"]), 0), axis=1
     )

@@ -209,11 +209,7 @@ async def main(args: argparse.Namespace) -> None:
     preds_dirname = args.preds_dirname
 
     # Load prompt template from markdown file
-    if True:
-        prompt_path = Path("prompts") / "property_matching_prompt.md"
-    else:
-        # NOTE: this prompt lead to less reliable results with gemini-2.5-flash-lite on Refno JAC2980051
-        prompt_path = Path("prompts") / "property_matching_prompt_cache_friendly.md"
+    prompt_path = Path("prompts") / "property_matching_prompt.md"
     with open(prompt_path, "r") as f:
         prompt_template = f.read()
 

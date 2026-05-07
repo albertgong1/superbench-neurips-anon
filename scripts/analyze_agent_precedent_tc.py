@@ -1,11 +1,10 @@
-"""
-Analyze and visualize stats of LLM agent trajectory results for precedent search.
+"""Analyze and visualize stats of LLM agent trajectory results for precedent search.
 
 Loads scored results CSVs and extracts tool use counts from trajectory.json files.
 Outputs summary statistics including mean ± stderr of tool use counts across runs.
 
 Usage:
-1. Get precedent-search-agent-metadata.zip and metadata CSV files from James, then
+1. Obtain precedent-search-agent-metadata.zip and metadata CSV files.
 2. Unzip precedent-search-agent-metadata.zip and place the contents in the current directory.
 3. Run the script:
     uv run python scripts/analyze_agent_precedent_tc.py \
@@ -29,12 +28,14 @@ import tldextract
 from tabulate import tabulate
 
 # Set font family to Times New Roman
-plt.rcParams.update({
-    "font.family": "serif",
-    "font.serif": ["Times New Roman", "DejaVu Serif"],
-    "axes.linewidth": 0.8,
-    "axes.edgecolor": "#333333",
-})
+plt.rcParams.update(
+    {
+        "font.family": "serif",
+        "font.serif": ["Times New Roman", "DejaVu Serif"],
+        "axes.linewidth": 0.8,
+        "axes.edgecolor": "#333333",
+    }
+)
 
 # URL extraction regex pattern
 URL_PATTERN = re.compile(r'https?://[^\s\'"<>\\]+')
@@ -68,7 +69,11 @@ CATEGORY_INCORRECT_CLASS = "Incorrect"
 CATEGORY_CORRECT_WRONG_VAL = "Partial"
 CATEGORY_FULLY_CORRECT = "Correct"
 
-CATEGORIES = [CATEGORY_INCORRECT_CLASS, CATEGORY_CORRECT_WRONG_VAL, CATEGORY_FULLY_CORRECT]
+CATEGORIES = [
+    CATEGORY_INCORRECT_CLASS,
+    CATEGORY_CORRECT_WRONG_VAL,
+    CATEGORY_FULLY_CORRECT,
+]
 
 # Colors for each category
 CATEGORY2COLOR: dict[str, str] = {
@@ -93,6 +98,7 @@ def extract_domains_from_text(text: str) -> list[str]:
 
     Returns:
         List of registered domains (e.g., ["crossref.org", "duckduckgo.com"])
+
     """
     urls = URL_PATTERN.findall(text)
     domains: list[str] = []
@@ -208,6 +214,7 @@ def load_tool_call_names_from_trajectory(
 
     Returns:
         Counter of function_name or domain occurrences.
+
     """
     if not trajectory_path.exists():
         return Counter()
@@ -244,6 +251,7 @@ def add_tool_counts_to_df(df: pd.DataFrame, agent: str) -> pd.DataFrame:
 
     Returns:
         DataFrame with n_tool_use_counts column added
+
     """
     # Get unique (job_id, metadata_trial_id) combinations
     # Each material has 3 rows (3 property_names), so we deduplicate
@@ -280,6 +288,7 @@ def categorize_material(material_df: pd.DataFrame) -> str:
 
     Returns:
         One of: CATEGORY_INCORRECT_CLASS, CATEGORY_CORRECT_WRONG_VAL, CATEGORY_FULLY_CORRECT
+
     """
     # Get the is_superconducting row
     is_sc_row = material_df[material_df["property_name"] == "is_superconducting"]
@@ -324,6 +333,7 @@ def add_category_to_df(df: pd.DataFrame) -> pd.DataFrame:
 
     Returns:
         DataFrame with correctness_category column added
+
     """
     # Build mapping from material -> category
     category_map: dict[str, str] = {}
@@ -347,6 +357,7 @@ def compute_breakdown_summary(
 
     Returns:
         DataFrame with columns: agent, category, mean_tool_calls, stderr_tool_calls, n_materials
+
     """
     results: list[dict] = []
 
@@ -365,18 +376,22 @@ def compute_breakdown_summary(
             for df in agent_df_list:
                 # Get unique materials in this category
                 cat_df = df[df["correctness_category"] == category]
-                material_counts = cat_df.groupby("material")["n_tool_use_counts"].first()
+                material_counts = cat_df.groupby("material")[
+                    "n_tool_use_counts"
+                ].first()
                 valid_counts = material_counts.dropna()
                 all_tool_counts.extend(valid_counts.tolist())
 
             if len(all_tool_counts) == 0:
-                results.append({
-                    "agent": agent,
-                    "category": category,
-                    "mean_tool_calls": None,
-                    "stderr_tool_calls": None,
-                    "n_materials": 0,
-                })
+                results.append(
+                    {
+                        "agent": agent,
+                        "category": category,
+                        "mean_tool_calls": None,
+                        "stderr_tool_calls": None,
+                        "n_materials": 0,
+                    }
+                )
             else:
                 mean_val = np.mean(all_tool_counts)
                 stderr_val = (
@@ -384,13 +399,15 @@ def compute_breakdown_summary(
                     if len(all_tool_counts) > 1
                     else 0
                 )
-                results.append({
-                    "agent": agent,
-                    "category": category,
-                    "mean_tool_calls": mean_val,
-                    "stderr_tool_calls": stderr_val,
-                    "n_materials": len(all_tool_counts),
-                })
+                results.append(
+                    {
+                        "agent": agent,
+                        "category": category,
+                        "mean_tool_calls": mean_val,
+                        "stderr_tool_calls": stderr_val,
+                        "n_materials": len(all_tool_counts),
+                    }
+                )
 
     return pd.DataFrame(results)
 
@@ -401,6 +418,7 @@ def plot_breakdown_bar_chart(breakdown_df: pd.DataFrame, output_path: Path) -> N
     Args:
         breakdown_df: DataFrame from compute_breakdown_summary
         output_path: Path to save the chart
+
     """
     FONT_SIZE = 24
     agents = list(breakdown_df["agent"].unique())
@@ -415,7 +433,9 @@ def plot_breakdown_bar_chart(breakdown_df: pd.DataFrame, output_path: Path) -> N
         means = []
         stderrs = []
         for agent in agents:
-            row = breakdown_df[(breakdown_df["agent"] == agent) & (breakdown_df["category"] == cat)]
+            row = breakdown_df[
+                (breakdown_df["agent"] == agent) & (breakdown_df["category"] == cat)
+            ]
             if row.empty or pd.isna(row["mean_tool_calls"].iloc[0]):
                 means.append(0)
                 stderrs.append(0)
@@ -448,7 +468,9 @@ def plot_breakdown_bar_chart(breakdown_df: pd.DataFrame, output_path: Path) -> N
     print(f"Saved breakdown chart to {output_path}")
 
 
-def compute_tool_use_counts_summary(dfs: list[pd.DataFrame], agents: list[str]) -> pd.DataFrame:
+def compute_tool_use_counts_summary(
+    dfs: list[pd.DataFrame], agents: list[str]
+) -> pd.DataFrame:
     """Compute mean ± stderr of tool use counts across job_ids for each agent.
 
     Args:
@@ -457,6 +479,7 @@ def compute_tool_use_counts_summary(dfs: list[pd.DataFrame], agents: list[str]) 
 
     Returns:
         DataFrame with agent step statistics
+
     """
     results: list[dict] = []
 
@@ -473,29 +496,39 @@ def compute_tool_use_counts_summary(dfs: list[pd.DataFrame], agents: list[str]) 
 
         for df in agent_df_list:
             # Get unique materials and their step counts
-            material_tool_use_counts = df.groupby("material")["n_tool_use_counts"].first()
+            material_tool_use_counts = df.groupby("material")[
+                "n_tool_use_counts"
+            ].first()
             valid_tool_use_counts = material_tool_use_counts.dropna()
 
             if len(valid_tool_use_counts) > 0:
                 job_means.append(valid_tool_use_counts.mean())
 
         if len(job_means) == 0:
-            results.append({
-                "agent": agent,
-                "mean_tool_use_counts": None,
-                "stderr_tool_use_counts": None,
-                "n_jobs": 0,
-            })
+            results.append(
+                {
+                    "agent": agent,
+                    "mean_tool_use_counts": None,
+                    "stderr_tool_use_counts": None,
+                    "n_jobs": 0,
+                }
+            )
         else:
             mean_val = np.mean(job_means)
-            stderr_val = np.std(job_means, ddof=1) / np.sqrt(len(job_means)) if len(job_means) > 1 else 0
+            stderr_val = (
+                np.std(job_means, ddof=1) / np.sqrt(len(job_means))
+                if len(job_means) > 1
+                else 0
+            )
 
-            results.append({
-                "agent": agent,
-                "mean_tool_use_counts": mean_val,
-                "stderr_tool_use_counts": stderr_val,
-                "n_jobs": len(job_means),
-            })
+            results.append(
+                {
+                    "agent": agent,
+                    "mean_tool_use_counts": mean_val,
+                    "stderr_tool_use_counts": stderr_val,
+                    "n_jobs": len(job_means),
+                }
+            )
 
     return pd.DataFrame(results)
 
@@ -520,6 +553,7 @@ def compute_tool_call_distribution(
 
     Returns:
         Dict mapping agent -> {function_name: normalized_fraction}
+
     """
     # Group DataFrames by agent
     agent_dfs: dict[str, list[pd.DataFrame]] = {}
@@ -572,6 +606,7 @@ def compute_tool_call_distribution_by_category(
 
     Returns:
         Dict mapping agent -> category -> {domain: normalized_fraction}
+
     """
     # Group DataFrames by agent
     agent_dfs: dict[str, list[pd.DataFrame]] = {}
@@ -591,7 +626,9 @@ def compute_tool_call_distribution_by_category(
 
             for df in agent_df_list:
                 # Get unique materials in this category
-                cat_materials = df[df["correctness_category"] == category]["material"].unique()
+                cat_materials = df[df["correctness_category"] == category][
+                    "material"
+                ].unique()
 
                 for material in cat_materials:
                     # Get the trial info for this material
@@ -602,7 +639,9 @@ def compute_tool_call_distribution_by_category(
                     task_run_dir = get_task_run_dir(agent, job_id, trial_id)
                     trajectory_path = task_run_dir / "agent" / "trajectory.json"
 
-                    counter = load_tool_call_names_from_trajectory(trajectory_path, agent)
+                    counter = load_tool_call_names_from_trajectory(
+                        trajectory_path, agent
+                    )
                     total_counter.update(counter)
 
             # Normalize by total count
@@ -632,6 +671,7 @@ def plot_url_distribution_stacked_horizontal(
         dist_by_cat: Dict from compute_tool_call_distribution_by_category
         output_dir: Directory to save the charts
         top_n: Number of top domains to show (others grouped as "other")
+
     """
     FONT_SIZE = 24
     LEGEND_FONT_SIZE = 14
@@ -645,7 +685,9 @@ def plot_url_distribution_stacked_horizontal(
         all_domains: set[str] = set()
         for cat in CATEGORIES:
             cat_dist = dist_by_cat[agent].get(cat, {})
-            top_items = sorted(cat_dist.items(), key=lambda x: x[1], reverse=True)[:top_n]
+            top_items = sorted(cat_dist.items(), key=lambda x: x[1], reverse=True)[
+                :top_n
+            ]
             all_domains.update(d for d, _ in top_items)
 
         if not all_domains:
@@ -656,14 +698,21 @@ def plot_url_distribution_stacked_horizontal(
         domain_list = sorted(all_domains)
         # Display domains in legend in order of CATEGORY_FULLY_CORRECT top N domains then CATEGORY_CORRECT_WRONG_VAL top N domains then CATEGORY_INCORRECT_CLASS top N domains then "other"
         domain_list = []
-        for cat in [CATEGORY_FULLY_CORRECT, CATEGORY_CORRECT_WRONG_VAL, CATEGORY_INCORRECT_CLASS]:
+        for cat in [
+            CATEGORY_FULLY_CORRECT,
+            CATEGORY_CORRECT_WRONG_VAL,
+            CATEGORY_INCORRECT_CLASS,
+        ]:
             cat_dist = dist_by_cat[agent].get(cat, {})
-            top_items = sorted(cat_dist.items(), key=lambda x: x[1], reverse=True)[:top_n]
+            top_items = sorted(cat_dist.items(), key=lambda x: x[1], reverse=True)[
+                :top_n
+            ]
             domain_list.extend(d for d, _ in top_items if d not in domain_list)
-        num_colors = 20 # NOTE: 20 colors are enough for this task, higher than len(domain_list). Same num_colors ensures consistent colors across agents.
+        # 20 colors exceeds len(domain_list); same num_colors keeps colors consistent across agents.
+        num_colors = 20
         cmap = plt.get_cmap("tab20", num_colors)
         domain_colors = {d: cmap(i) for i, d in enumerate(domain_list)}
-        domain_colors["other"] = cmap(num_colors-1)
+        domain_colors["other"] = cmap(num_colors - 1)
 
         y_positions = np.arange(len(CATEGORIES))
         bar_height = 0.6
@@ -705,7 +754,10 @@ def plot_url_distribution_stacked_horizontal(
 
         ax.set_yticks(y_positions)
         ax.set_yticklabels([c for c in CATEGORIES], fontsize=FONT_SIZE)
-        ax.set_xlabel(f"{AGENT2AGENT_NAME[agent]} - Fraction of Tool Calls", fontsize=TICK_LABEL_SIZE)
+        ax.set_xlabel(
+            f"{AGENT2AGENT_NAME[agent]} - Fraction of Tool Calls",
+            fontsize=TICK_LABEL_SIZE,
+        )
         ax.set_xlim(0, 1)
         ax.grid(axis="x", alpha=0.3)
         ax.tick_params(axis="both", labelsize=TICK_LABEL_SIZE)
@@ -717,7 +769,9 @@ def plot_url_distribution_stacked_horizontal(
             for d in domain_list
         ]
         legend_handles.append(
-            plt.Rectangle((0, 0), 1, 1, facecolor=domain_colors["other"], edgecolor="white")
+            plt.Rectangle(
+                (0, 0), 1, 1, facecolor=domain_colors["other"], edgecolor="white"
+            )
         )
         legend_labels = domain_list + ["other"]
 
@@ -726,7 +780,7 @@ def plot_url_distribution_stacked_horizontal(
             legend_labels,
             loc="center left",
             bbox_to_anchor=(1.0, 0.5),
-            fontsize=LEGEND_FONT_SIZE
+            fontsize=LEGEND_FONT_SIZE,
         )
 
         plt.tight_layout()
@@ -825,12 +879,17 @@ def main() -> None:
     for agent in tool_dist:
         print(f"\n### {agent}\n")
         # Sort by fraction descending and take top 10
-        sorted_items = sorted(tool_dist[agent].items(), key=lambda x: x[1], reverse=True)[:10]
+        sorted_items = sorted(
+            tool_dist[agent].items(), key=lambda x: x[1], reverse=True
+        )[:10]
         if not sorted_items:
             print("No tool calls found.\n")
             continue
 
-        top_rows = [{"Tool/Domain": name, "Fraction": f"{frac:.1%}"} for name, frac in sorted_items]
+        top_rows = [
+            {"Tool/Domain": name, "Fraction": f"{frac:.1%}"}
+            for name, frac in sorted_items
+        ]
         print(tabulate(top_rows, headers="keys", tablefmt="github", showindex=False))
 
     ### 4. URL distribution by correctness category (top 5 per agent per category)

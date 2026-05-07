@@ -129,7 +129,6 @@ def process_paper(
         # Parse and store extracted values
         _, pred_value, pred_unit = extract_property_from_response(response.pred)
 
-        # TODO: Make this a pydantic model so that score_task.py can use it
         result = {
             "refno": refno,
             "material": material,
@@ -180,7 +179,6 @@ def main(args: argparse.Namespace) -> None:
 
     llm = llm_utils.get_llm(args.server, args.model_name)
 
-    # TODO: Load inference generation config from yaml file
     inf_gen_config = llm_utils.InferenceGenerationConfig()
 
     # Process batches

@@ -1,7 +1,4 @@
-"""Dictionary mapping normalized space group symbols to their respective numbers.
-
-Reference: TODO
-"""
+"""Dictionary mapping normalized space group symbols to their respective numbers."""
 
 SPACE_GROUPS = {
     "p1": 1,

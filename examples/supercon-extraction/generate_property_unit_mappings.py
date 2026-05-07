@@ -1,6 +1,6 @@
 """Script to generate a CSV file of SuperCon property-unit mappings from the properties-oxide-metal-glossary.csv file.
 
-NOTE: the unit property is usually found before the property it is associated with.
+The unit property is usually found before the property it is associated with.
 
 This script will generate a CSV file with the following columns:
 - property: the property db
@@ -77,7 +77,6 @@ def is_related_property(unit_row, property_row, property_names_from_unit) -> boo
         property_names_from_unit: A set of property name aliases
 
     """
-    # import pdb; pdb.set_trace()
     if not property_row.get("Physically_Relevant", False):
         return False
 
@@ -100,7 +99,6 @@ def is_related_property(unit_row, property_row, property_names_from_unit) -> boo
     prop_desc = str(prop_desc_val).lower() if pd.notna(prop_desc_val) else ""
 
     if property_names_from_unit:
-        # import pdb; pdb.set_trace()
         # Check if any of the aliases appear in the property row
         for search_term in property_names_from_unit:
             search_term_lower = search_term.lower()
@@ -210,7 +208,6 @@ all_found_properties = set()
 while i < len(rows):
     row = rows[i]
     if is_unit_row(row):
-        # import pdb; pdb.set_trace()
         unit_db = row["db"]
         # update all found properties with unit
         all_found_properties.add(unit_db)

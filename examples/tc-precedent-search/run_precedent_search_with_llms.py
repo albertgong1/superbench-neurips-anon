@@ -182,7 +182,7 @@ async def process_material(
         )
         end_time = time.time()
         result["time_taken_seconds"] = end_time - start_time
-        
+
         # Extract usage
         if response.usage:
             result["prompt_tokens"] = response.usage.get("prompt_tokens")
@@ -197,7 +197,7 @@ async def process_material(
             return result
 
         if str(getattr(response, "finish_reason", "")):
-             result["finish_reason"] = response.finish_reason
+            result["finish_reason"] = response.finish_reason
 
         result["raw_response"] = response.pred
 
@@ -206,7 +206,9 @@ async def process_material(
             result["web_search_queries"] = json.dumps(web_search_metadata.queries)
             result["web_search_uris"] = json.dumps(web_search_metadata.uris)
             result["web_search_titles"] = json.dumps(web_search_metadata.titles)
-            result["web_search_grounding_supports"] = json.dumps(web_search_metadata.grounding_supports)
+            result["web_search_grounding_supports"] = json.dumps(
+                web_search_metadata.grounding_supports
+            )
             result["web_search_num_tool_calls"] = web_search_metadata.num_tool_calls
 
         # Extract predictions
@@ -267,8 +269,8 @@ async def run_precedent_search(args: argparse.Namespace) -> None:
     # Initialize LLM
     llm = llm_utils.get_llm(args.server, args.model_name)
 
-    # Create inference config with web search enabled
-    # NOTE: OpenAI does not support web_search+JSON output format. So if the server is openai and web search is enabled, the output format will be text.
+    # OpenAI does not support web_search+JSON output format. So if the server is openai
+    # and web search is enabled, the output format will be text.
     if args.server == "openai" and args.use_web_search:
         output_format = "text"
     else:
@@ -289,7 +291,9 @@ async def run_precedent_search(args: argparse.Namespace) -> None:
     model_name_safe = args.model_name.replace("/", "--")
     web_search_suffix = "__websearch" if args.use_web_search else ""
     run_suffix = args.run
-    output_filename = f"precedent_search__model={model_name_safe}{web_search_suffix}_{run_suffix}.csv"
+    output_filename = (
+        f"precedent_search__model={model_name_safe}{web_search_suffix}_{run_suffix}.csv"
+    )
     output_path = output_dir / output_filename
 
     # Check if output already exists

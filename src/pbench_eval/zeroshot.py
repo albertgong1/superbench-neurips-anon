@@ -145,8 +145,6 @@ def json_property_to_csv_row(prop: dict) -> pd.Series:
 
     # Build Series
     row_data = {
-        # "id": "", # NOTE: will be automatically assigned when writing to CSV
-        # "refno": refno, # NOTE: will be automatically assigned when writing to CSV
         "material_or_system": prop.get("material_or_system", ""),
         "sample_label": prop.get("sample_label", ""),
         "property_name": prop.get("property_name", ""),
@@ -165,13 +163,6 @@ def json_property_to_csv_row(prop: dict) -> pd.Series:
 
     # Add the flattened condition columns
     row_data.update(condition_cols)
-
-    # NOTE: values below will be populated later by the validator app
-    # "paper_pdf_path": "",
-    # "validated": False,
-    # "validator_name": "",
-    # "validation_date": "",
-    # "flagged": False,
 
     return pd.Series(row_data)
 
@@ -205,7 +196,7 @@ async def process_paper(
             Message(role="user", content=[file, prompt]),
         ]
     )
-    # Get LLM response (NOTE: 429 errors will be raised as exceptions here)
+    # 429 errors will be raised as exceptions here.
     response = await llm.generate_response_async(conv, inf_gen_config)
     # Check for errors
     if response.error:
@@ -213,7 +204,7 @@ async def process_paper(
 
     # Extract properties from response JSON
     try:
-        # NOTE: Since we specified output_format="json", response.pred is already parsed JSON
+        # Since we specified output_format="json", response.pred is already parsed JSON.
         json_data = response.pred
         # Check for properties array
         if "properties" not in json_data:
@@ -229,7 +220,6 @@ async def process_paper(
     all_rows: list[pd.Series] = []
     property_counter = 0
 
-    # for properties, _ in page_results:
     for prop in properties:
         try:
             # Remove the temporary page_num field before converting
@@ -371,16 +361,7 @@ async def extract_properties(args: argparse.Namespace) -> None:
         with open(args.harbor_task_ordering_registry_path, "r") as f:
             harbor_task_ordering = json.load(f)
 
-        # Load the refnos from harbor_task_ordering[0]["tasks"][:]["name"]
-        if False:
-            refnos_ordering = [
-                task["name"].strip().upper()
-                for task in harbor_task_ordering[0]["tasks"]
-            ]
-        else:
-            refnos_ordering = [
-                task["name"] for task in harbor_task_ordering[0]["tasks"]
-            ]
+        refnos_ordering = [task["name"] for task in harbor_task_ordering[0]["tasks"]]
 
     if args.max_num_papers is not None:
         refnos_ordering = refnos_ordering[: args.max_num_papers]
@@ -389,8 +370,7 @@ async def extract_properties(args: argparse.Namespace) -> None:
     reordered_pdf_files = []
     for refno in refnos_ordering:
         for pdf in pdf_files:
-            # NOTE: refno from Harbor registry has been sluggified, so we need to slugify
-            # both sides during matching
+            # refno from the Harbor registry is slugified; slugify both sides for matching.
             if slugify(pdf.stem) == slugify(refno):
                 reordered_pdf_files.append(pdf)
                 break
@@ -486,13 +466,6 @@ def main() -> None:
         default=Path("prompts/unsupervised_extraction_prompt.md"),
         help="Path to the unsupervised extraction prompt (default: prompts/unsupervised_extraction_prompt.md)",
     )
-    # parser.add_argument(
-    #     "--file_no",
-    #     "-fn",
-    #     type=int,
-    #     default=None,
-    #     help="Specific file number to process (1-indexed). If None, process all files",
-    # )
     parser.add_argument(
         "--refno",
         type=str,

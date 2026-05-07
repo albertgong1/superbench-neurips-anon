@@ -215,7 +215,6 @@ def compute_evidence_recall_by_page(
             ]
 
             logger.debug(f"Processing agent={agent}, model={model}, refno={gt_refno}")
-            # import pdb; pdb.set_trace()
 
             # Get unique pages from GT
             gt_pages = df_gt_refno[page_column].dropna().astype(int).unique()
@@ -265,9 +264,10 @@ def compute_evidence_f1_by_refno(
     for (agent, model, refno), group in df_pred.groupby(
         ["agent", "model", "refno"], dropna=False
     ):
-        # Filter ground truth for this refno
-        # NOTE: For Harbor evaluation, the refno for predictions is inferred from the trial dirname,
-        # which is slugified. The refno in the GT is not slugified, so we need to slugify it for matching.
+        # Filter ground truth for this refno.
+        # For Harbor evaluation, the refno for predictions is inferred from the trial
+        # dirname, which is slugified. The refno in the GT is not slugified, so slugify
+        # both sides for matching.
         df_gt_refno = df_gt[
             df_gt["refno"].str.lower().apply(lambda x: slugify(x))
             == slugify(refno.lower())
@@ -329,7 +329,7 @@ def cli_main() -> None:
     pbench.setup_logging(args.log_level)
 
     # Load predictions
-    if len(args.jobs_dir_list) > 0:  # args.jobs_dir is not None:
+    if len(args.jobs_dir_list) > 0:
         dfs = []
         for jobs_dir in args.jobs_dir_list:
             logger.info(f"Loading predictions from Harbor jobs: {jobs_dir}")
@@ -342,10 +342,7 @@ def cli_main() -> None:
     else:
         dfs = []
         for output_dir in args.output_dir_list:
-            if False:
-                pred_properties_dir = args.output_dir / args.preds_dirname
-            else:
-                pred_properties_dir = output_dir / args.preds_dirname
+            pred_properties_dir = output_dir / args.preds_dirname
             if not pred_properties_dir.exists():
                 logger.error(f"Directory not found: {pred_properties_dir}")
                 sys.exit(1)

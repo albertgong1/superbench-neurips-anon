@@ -248,8 +248,7 @@ def get_harbor_data(jobs_dir: Path) -> pd.DataFrame:
                     f"No properties found in predictions for trial: {trial_dir}"
                 )
                 continue
-            # HACK: if "id" key is missing from any property in the predictions list,
-            # then assign a dummy id to each property based on its index using uuid
+            # If "id" is missing from any property, assign a dummy uuid-based id.
             for prop in predictions["properties"]:
                 if "id" not in prop:
                     prop["id"] = f"prop_{uuid.uuid4()}"

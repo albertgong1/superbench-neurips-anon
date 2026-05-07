@@ -315,8 +315,7 @@ def _collect_from_trajectories_dir(
                 u_thinking_tokens = usage.get("reasoning_tokens", 0)
                 u_thinking_included_in_completion = True
             else:
-                # Gemini format
-                # NOTE: completion_tokens may be None
+                # Gemini format (completion_tokens may be None)
                 u_completion_tokens = usage.get("completion_tokens", 0) or 0
                 u_thinking_tokens = usage.get("thinking_tokens", 0)
                 u_thinking_included_in_completion = False

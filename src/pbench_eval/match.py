@@ -81,7 +81,6 @@ async def check_if_same_property(
 
     """
     if property_name_1.strip() == property_name_2.strip():
-        # import pdb; pdb.set_trace()
         # Shortcut: if property names are identical, return match
         result = {
             "is_match": True,
@@ -135,7 +134,7 @@ async def generate_property_name_matches(
 ) -> pd.DataFrame:
     """For each row in df1, find the top-k matches in df2 based on property name and context
 
-    NOTE: this queries the Gemini API and requires setting up GOOGLE_API_KEY environment variable.
+    Queries the Gemini API; requires GOOGLE_API_KEY in the environment.
 
     Args:
         df1: DataFrame of properties 1 with columns "embedding" and those in `left_on`.
@@ -153,9 +152,6 @@ async def generate_property_name_matches(
         DataFrame containing top_k * len(df1) rows with columns from df1 and df2.
 
     """
-    # import pdb; pdb.set_trace()
-    # TODO: group df1 on left_on columns, so that we can skip some LLM calls,
-    # then expand the groups to get the full df1 before returning the result
     # initial match on property name only using embedding similarity
     Y = df2.drop_duplicates(subset=["property_name"])
     # Compute the similarity matrix between property names from df1 and df2
@@ -172,14 +168,14 @@ async def generate_property_name_matches(
     idx_to_task_id = {}
     for i in tqdm(range(len(df1)), desc="Processing df1"):
         x = df1.iloc[i].to_dict()
-        # Find the rows in Y whose property name is in the top_k matches for x
-        # NOTE: this may yield more than k matches since some rows share property name, but not context
+        # Find the rows in Y whose property name is in the top_k matches for x.
+        # This may yield more than k matches since some rows share property name but not context.
         top_k_matches = Y.iloc[top_k_matches_indices[i]]["property_name"].tolist()
         df2_top_k = df2[df2["property_name"].isin(top_k_matches)]
         logger.debug(f"Found {len(df2_top_k)} matches for {x['property_name']}")
-        # Construct async tasks, reusing the same task for rows with the same property name and context
+        # Construct async tasks, reusing the same task for rows with the same property name and context.
         for idx, y in df2_top_k.iterrows():
-            # NOTE: rename the variables to avoid conflicts when substituting them into the prompt template
+            # Rename the variables to avoid conflicts when substituting them into the prompt template.
             x_variables = {k + "_1": x[k] for k in left_on}
             y_variables = {k + "_2": y[k] for k in right_on}
             task_id = (json.dumps(x_variables), json.dumps(y_variables))
@@ -194,16 +190,12 @@ async def generate_property_name_matches(
                 )
                 tasks[task_id] = task
     # Execute all tasks concurrently
-    if False:
-        BATCH_SIZE = 100
-    else:
-        BATCH_SIZE = len(tasks)  # run all at once
+    BATCH_SIZE = len(tasks)  # run all at once
     results_data = []
     for i in tqdm(range(0, len(tasks), BATCH_SIZE), desc="Calling LLM API in batches"):
         batch_tasks = {k: tasks[k] for k in list(tasks.keys())[i : i + BATCH_SIZE]}
         batch_results = await asyncio.gather(*batch_tasks.values())
         results_data.extend(batch_results)
-        # await asyncio.sleep(1)  # brief pause to avoid overwhelming the API
     results = {
         task_id: result for task_id, (result, _) in zip(tasks.keys(), results_data)
     }
@@ -234,7 +226,6 @@ async def generate_property_name_matches(
 
     # Return LLM responses along with match results
     responses = [response for _, response in results_data]
-    # df_responses = pd.DataFrame({"responses" : responses})
     # expand the properties dict into separate columns
     df_responses = pd.json_normalize(responses)
 

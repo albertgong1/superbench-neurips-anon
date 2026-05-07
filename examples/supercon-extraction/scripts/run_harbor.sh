@@ -47,13 +47,8 @@ for combo in "${combinations[@]}"; do
   echo "Running agent=${agent} model=${model} kwargs=${kwargs}"
   echo "========================================"
 
-  # NOTE: we already have the first 50 tasks
   for batch in $(seq 2 $NUM_BATCHES); do
     echo "Running batch ${batch}/${NUM_BATCHES}..."
-    # CMD="uv run python ../../src/harbor-task-gen/run_batch_harbor.py jobs start \
-    #   --hf-tasks-repo kilian-group/supercon-extraction-harbor-tasks --hf-tasks-version head \
-    #   -a ${agent} -m ${model} ${ak_args} \
-    #   --workspace . --jobs-dir ${jobs_dir} --seed 1 --batch-size ${BATCH_SIZE} --batch-number ${batch} $cmd_args"
     CMD="uv run python ../../src/harbor-task-gen/run_batch_harbor.py jobs start \
       --registry-path out-0121-harbor/targeted-stoichiometric-template/registry.json --dataset supercon-extraction@main \
       -a ${agent} -m ${model} ${ak_args} \

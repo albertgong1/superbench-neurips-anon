@@ -44,8 +44,7 @@ CRYSTAL_SYMMETRY: dict[int, str] = {
     7: "hexagonal",
 }
 
-# Shape mapping
-# NOTE: we insert space before parentheses for formatting consistency
+# Shape mapping (space before parentheses for formatting consistency)
 SHAPE: dict[int, str] = {
     1: "single phase (bulk)",
     2: "multi phase (bulk)",
@@ -235,8 +234,6 @@ def _load_trial_predictions(
         content = log_path.read_text()
     except Exception:
         return None
-    # if trial_dir.name == "prb076212504__2s8uVnW":
-    # import pdb; pdb.set_trace()
     # First try to extract text from JSONL format
     decoded = _extract_text_from_jsonlines_log(content)
     text = decoded or content
@@ -347,8 +344,6 @@ def get_harbor_data(jobs_dir: Path) -> pd.DataFrame:
         for trial_dir in sorted(batch_dir.iterdir()):
             if not trial_dir.is_dir():
                 continue
-            # if trial_dir == Path("/Users/ag2435/sci_llm/src/sci-llm/examples/supercon-extraction/jobs-0119-2/bn4-bs10-gemini-cli-gemini-3-flash-preview-s1/epl10417003__N7A2Qhh"):
-            #     import pdb; pdb.set_trace()
             predictions = _load_trial_predictions(trial_dir)
             if predictions is None:
                 logger.warning(f"No valid predictions found in trial: {trial_dir}")
@@ -363,8 +358,7 @@ def get_harbor_data(jobs_dir: Path) -> pd.DataFrame:
                     f"No properties found in predictions for trial: {trial_dir}"
                 )
                 continue
-            # HACK: if "id" key is missing from any property in the predictions list,
-            # then assign a dummy id to each property based on its index using uuid
+            # If "id" key is missing from any property, assign a dummy id using uuid
             for prop in predictions["properties"]:
                 if "id" not in prop:
                     prop["id"] = f"prop_{uuid.uuid4()}"

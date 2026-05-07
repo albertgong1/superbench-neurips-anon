@@ -430,7 +430,7 @@ def compute_precision_per_material_property(
 def add_property_name_embeddings(df: pd.DataFrame) -> pd.DataFrame:
     """Add embeddings and context to a dataframe of properties.
 
-    NOTE: this queries the Gemini API and requires setting up GOOGLE_API_KEY environment variable.
+    Queries the Gemini API; requires GOOGLE_API_KEY in the environment.
 
     Args:
         df: DataFrame with properties.
@@ -459,12 +459,9 @@ async def compute_mean_recall_precision(
 ) -> tuple[float, float]:
     """Calculate mean recall and precision metrics for a single task.
 
-    TODO: test that this function recreates the results from using the step-by-step scripts.
-
     Args:
         df_pred: DataFrame with predicted properties.
-        df_gt: DataFrame with ground truth properties.
-            NOTE: should include a column "rubric"
+        df_gt: DataFrame with ground truth properties; must include a "rubric" column.
         property_matching_prompt_template: Prompt template for property matching.
         conversion_df: DataFrame with unit conversion factors.
 
@@ -496,7 +493,6 @@ async def compute_mean_recall_precision(
 
     # -- Core functionality to compute recall --
     # Generate matches between predicted and ground truth properties
-    # TODO: save these matches to file so that we can analyze the LLM-as-a-judge predictions in them later
     df_pred_matches, _ = await generate_property_name_matches(
         df_pred,
         df_gt,
@@ -512,7 +508,6 @@ async def compute_mean_recall_precision(
 
     # -- Core functionality to compute precision --
     # Generate matches between predicted and ground truth properties
-    # TODO: save these matches to file so that we can analyze the LLM-as-a-judge predictions in them later
     df_gt_matches, _ = await generate_property_name_matches(
         df_gt,
         df_pred,

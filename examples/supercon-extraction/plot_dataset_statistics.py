@@ -70,8 +70,8 @@ print(df["num_properties"].describe())
 
 #
 # Compute proportion of categories
+# Uses the "category" column from the rubric.
 #
-# NOTE: use the "category" column from the rubric
 df = df.explode(column="properties").reset_index(drop=True)
 df = pd.concat(
     [df.drop(columns=["properties"]), pd.json_normalize(df["properties"])], axis=1

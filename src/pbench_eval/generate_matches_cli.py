@@ -97,18 +97,14 @@ async def process_single_group(
         else:
             df_pred["context"] = ""
 
-        # Prepare ground truth data for this refno
-        if False:
-            df_gt_refno = df_gt[df_gt["refno"].str.lower() == refno.lower()].drop(
-                columns=["refno"]
-            )
-        else:
-            # NOTE: For Harbor evaluation, the refno for predictions is inferred from the trial dirname,
-            # which is slugified. The refno in the GT is not slugified, so we need to slugify it for matching.
-            df_gt_refno = df_gt[
-                df_gt["refno"].str.lower().apply(lambda x: slugify(x))
-                == slugify(refno.lower())
-            ].drop(columns=["refno"])
+        # Prepare ground truth data for this refno.
+        # For Harbor evaluation, the refno for predictions is inferred from the trial
+        # dirname, which is slugified. The refno in the GT is not slugified, so slugify
+        # both sides for matching.
+        df_gt_refno = df_gt[
+            df_gt["refno"].str.lower().apply(lambda x: slugify(x))
+            == slugify(refno.lower())
+        ].drop(columns=["refno"])
 
         # Define paths
         pred_matches_path = (
@@ -283,14 +279,22 @@ async def main(args: argparse.Namespace) -> None:
         df = pd.concat(dfs, ignore_index=True)
 
     # Optionally restrict to refnos listed in a registry file
-    registry_path = Path(args.registry_path) if args.registry_path else output_dir / "registry_data.json"
+    registry_path = (
+        Path(args.registry_path)
+        if args.registry_path
+        else output_dir / "registry_data.json"
+    )
     registry_limit = args.registry_limit
     if registry_limit > 0 and registry_path.exists():
         allowed_refnos = load_registry_refnos(registry_path, registry_limit)
         allowed_refnos_slugified = {slugify(refno.lower()) for refno in allowed_refnos}
         original_rows = len(df)
         df = df[
-            df["refno"].astype(str).str.lower().apply(lambda x: slugify(x)).isin(allowed_refnos_slugified)
+            df["refno"]
+            .astype(str)
+            .str.lower()
+            .apply(lambda x: slugify(x))
+            .isin(allowed_refnos_slugified)
         ].copy()
         logger.info(
             "Filtered predictions using %s: kept %d rows across first %d registry tasks (from %d rows)",

@@ -280,10 +280,8 @@ def aggregate_usage(usage_list: list[dict]) -> dict:
 
     Uses the first non-empty dict as reference schema for keys.
 
-    NOTE: assumes that each usage dict in the list shares a common schema.
-    Otherwise, value errors may occur.
-
-    NOTE: assumes that the usage values are summable.
+    Assumes each usage dict in the list shares a common schema and that the usage
+    values are summable; otherwise value errors may occur.
 
     Args:
         usage_list: List of usage dict objects.

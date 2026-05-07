@@ -57,13 +57,10 @@ for csv_file in csv_files:
     dfs.append(df)
 
 df_matches = pd.concat(dfs, ignore_index=True)
-# NOTE: if judge is NaN, it means exact string match was used for matching
+# If judge is NaN, it means exact string match was used for matching.
 df_matches = df_matches[
     (df_matches["judge"] == model_name) | (df_matches["judge"].isna())
 ]
-if False:
-    # only include rows where batch starts with 'bn1'
-    df_matches = df_matches[df_matches["batch"].str.startswith("bn1")]
 logger.info(
     f"Loaded {len(df_matches)} total rows using {model_name} for property matching"
 )
@@ -119,7 +116,6 @@ for (agent, model, refno), group in df_results.groupby(
     logger.debug(
         f"Saving recall results for {agent} {model} {refno} to {output_csv_path}"
     )
-    # import pdb; pdb.set_trace()
     group.to_csv(output_csv_path, index=False)
 
 counta = lambda x: (x > 0).sum()  # noqa: E731

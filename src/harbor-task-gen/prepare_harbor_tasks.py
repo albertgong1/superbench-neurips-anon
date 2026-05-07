@@ -817,8 +817,8 @@ def main() -> None:
         print(f"Wrote job config -> {job_rel}")
 
     # -- Write local registry.json --
-    # NOTE: the local registry JSON is consistent with the HF upload registry JSON,
-    # just with local task paths.
+    # The local registry JSON mirrors the HF upload registry JSON but uses local
+    # task paths.
     generated_task_dirs = _collect_task_dirs(
         tasks_dir, disable_verification=bool(args.no_score)
     )
@@ -847,7 +847,6 @@ def main() -> None:
         )
 
     if args.upload_hf:
-        # import pdb; pdb.set_trace()
         _upload_tasks_after_build(
             args=args,
             tasks_root=task_root,
@@ -883,48 +882,44 @@ def _collect_task_dirs(
 
 
 def _shuffle_task_dirs(task_dirs: list[Path], seed: int) -> list[Path]:
-    """Shuffle task directories with a deterministic seed."""
-    if True:
-        logger.warning("Using custom shuffling with always-include papers.")
-        # HACK: include papers that Chao and Fatmagul have already validated at the start.
-        REFNOS_ALWAYS_INCLUDE = [
-            "0304328",
-            "0505463",
-            "0804.1930",
-            "0807.2541",
-            "0811.0342",
-            "0812.1214",
-            "0903.4018",
-            "0908.0518",
-            "1312.5475",
-            "1401.0712",
-            "1401.1975",
-            "1602.07983",
-            "1612.04105",
-            "1711.09143",
-            "1906.07149",
-            "1910.05526",
-            "2001.05649",
-            "2111.01152",
-            "2302.10031",
-            "9902061",
-            "9907030",
-            "9912178",
-        ]
-        always_include_dirs = [
-            d for d in task_dirs if d.name.replace("-", ".") in REFNOS_ALWAYS_INCLUDE
-        ]
-        remaining_dirs = [
-            d
-            for d in task_dirs
-            if d.name.replace("-", ".") not in REFNOS_ALWAYS_INCLUDE
-        ]
-        random.Random(seed).shuffle(remaining_dirs)
-        return always_include_dirs + remaining_dirs
-    else:
-        shuffled = list(task_dirs)
-        random.Random(seed).shuffle(shuffled)
-        return shuffled
+    """Shuffle task directories with a deterministic seed.
+
+    Pre-validated papers are placed at the start of the order; the remainder is
+    shuffled deterministically.
+    """
+    logger.warning("Using custom shuffling with always-include papers.")
+    REFNOS_ALWAYS_INCLUDE = [
+        "0304328",
+        "0505463",
+        "0804.1930",
+        "0807.2541",
+        "0811.0342",
+        "0812.1214",
+        "0903.4018",
+        "0908.0518",
+        "1312.5475",
+        "1401.0712",
+        "1401.1975",
+        "1602.07983",
+        "1612.04105",
+        "1711.09143",
+        "1906.07149",
+        "1910.05526",
+        "2001.05649",
+        "2111.01152",
+        "2302.10031",
+        "9902061",
+        "9907030",
+        "9912178",
+    ]
+    always_include_dirs = [
+        d for d in task_dirs if d.name.replace("-", ".") in REFNOS_ALWAYS_INCLUDE
+    ]
+    remaining_dirs = [
+        d for d in task_dirs if d.name.replace("-", ".") not in REFNOS_ALWAYS_INCLUDE
+    ]
+    random.Random(seed).shuffle(remaining_dirs)
+    return always_include_dirs + remaining_dirs
 
 
 def _hf_repo_url(repo_id: str, repo_type: str) -> str:
@@ -1024,8 +1019,8 @@ def upload_tasks_to_hf(
         except Exception as exc:
             raise SystemExit(f"Repo not found or not accessible: {repo_id}") from exc
 
-    # NOTE: upload_large_folder does not support path_in_repo or commit_message.
-    # If path_in_repo is needed, local folder structure must match the desired repo path.
+    # upload_large_folder does not support path_in_repo or commit_message; the local
+    # folder structure must match the desired repo path.
     api.upload_large_folder(
         repo_id=str(repo_id),
         repo_type=str(repo_type),

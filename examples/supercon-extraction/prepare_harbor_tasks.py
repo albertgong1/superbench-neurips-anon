@@ -363,8 +363,8 @@ def main() -> None:
         print(f"Wrote task {task_id} -> {task_rel}")
 
     # -- Write local registry.json --
-    # NOTE: the local registry JSON is consistent with the HF upload registry JSON,
-    # just with local task paths.
+    # The local registry JSON mirrors the HF upload registry JSON but uses local
+    # task paths.
     generated_task_dirs = _collect_task_dirs(tasks_dir)
     if args.seed is not None:
         random.Random(args.seed).shuffle(generated_task_dirs)
@@ -514,8 +514,8 @@ def upload_tasks_to_hf(
         except Exception as exc:
             raise SystemExit(f"Repo not found or not accessible: {repo_id}") from exc
 
-    # NOTE: upload_large_folder does not support path_in_repo or commit_message.
-    # If path_in_repo is needed, local folder structure must match the desired repo path.
+    # upload_large_folder does not support path_in_repo or commit_message; the local
+    # folder structure must match the desired repo path.
     api.upload_large_folder(
         repo_id=str(repo_id),
         repo_type=str(repo_type),

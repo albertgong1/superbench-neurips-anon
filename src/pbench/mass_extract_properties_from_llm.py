@@ -128,8 +128,6 @@ def json_property_to_csv_row(prop: dict) -> pd.Series:
 
     # Build Series
     row_data = {
-        # "id": "", # NOTE: will be automatically assigned when writing to CSV
-        # "refno": refno, # NOTE: will be automatically assigned when writing to CSV
         "material_or_system": prop.get("material_or_system", ""),
         "sample_label": prop.get("sample_label", ""),
         "property_name": prop.get("property_name", ""),
@@ -148,13 +146,6 @@ def json_property_to_csv_row(prop: dict) -> pd.Series:
 
     # Add the flattened condition columns
     row_data.update(condition_cols)
-
-    # NOTE: values below will be populated later by the validator app
-    # "paper_pdf_path": "",
-    # "validated": False,
-    # "validator_name": "",
-    # "validation_date": "",
-    # "flagged": False,
 
     return pd.Series(row_data)
 
@@ -498,13 +489,6 @@ def main() -> None:
         default=Path("prompts/unsupervised_extraction_prompt.md"),
         help="Path to the unsupervised extraction prompt (default: prompts/unsupervised_extraction_prompt.md)",
     )
-    # parser.add_argument(
-    #     "--file_no",
-    #     "-fn",
-    #     type=int,
-    #     default=None,
-    #     help="Specific file number to process (1-indexed). If None, process all files",
-    # )
     parser.add_argument(
         "--refno",
         type=str,

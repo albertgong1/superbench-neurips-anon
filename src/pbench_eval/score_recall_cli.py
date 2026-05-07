@@ -80,12 +80,10 @@ def compute_recall_by_refno(args: Namespace) -> pd.DataFrame:
         dfs.append(df)
 
     df_matches = pd.concat(dfs, ignore_index=True)
-    # NOTE: if judge is NaN, it means exact string match was used for matching
+    # If judge is NaN, it means exact string match was used for matching.
     df_matches = df_matches[
         (df_matches["judge"] == model_name) | (df_matches["judge"].isna())
     ]
-    # TODO (Albert): fix bug where exact matches from other judge models will be included by uncommenting the line below.
-    # df_matches = df_matches[df_matches["judge"] == model_name]
     logger.info(
         f"Loaded {len(df_matches)} total rows using {model_name} for property matching"
     )
@@ -95,7 +93,9 @@ def compute_recall_by_refno(args: Namespace) -> pd.DataFrame:
         eval_data_root = repo_root / "pbench_out"
         registry_data_path = eval_data_root / "registry_data.json"
         if not (registry_data_path.exists() and registry_data_path.is_file()):
-            raise RuntimeError(f"We seem to be missing the registry data... we expect a JSON with the paper refnos to exist at: {registry_data_path.absolute()}")
+            raise RuntimeError(
+                f"We seem to be missing the registry data... we expect a JSON with the paper refnos to exist at: {registry_data_path.absolute()}"
+            )
         registry_data = json.loads(Path(registry_data_path).read_text())
         assert isinstance(registry_data, list)
         eval_subset = registry_data[0]["tasks"]
@@ -109,7 +109,9 @@ def compute_recall_by_refno(args: Namespace) -> pd.DataFrame:
         df_matches = df_matches[df_matches["refno_normed"].isin(refnos)]
         del df_matches["refno_normed"]
         num_rows_after_filtering = df_matches.shape[0]
-        print(f"Registry data filter result for {first_n} paper(s): {num_rows_original:,} -> {num_rows_after_filtering:,}")
+        print(
+            f"Registry data filter result for {first_n} paper(s): {num_rows_original:,} -> {num_rows_after_filtering:,}"
+        )
 
     group_cols = ["agent", "model"]
 
@@ -224,7 +226,9 @@ def cli_main() -> None:
         help="Column name for material matching (default: material_or_system)",
     )
     parser.add_argument(
-        '--non_llm_baseline', action='store_true', help='Flag for special logic for non-agent and non-LLM eval.'
+        "--non_llm_baseline",
+        action="store_true",
+        help="Flag for special logic for non-agent and non-LLM eval.",
     )
 
     args = parser.parse_args()
@@ -255,7 +259,7 @@ def cli_main() -> None:
         dfs.append(df)
 
     df_matches = pd.concat(dfs, ignore_index=True)
-    # NOTE: if judge is NaN, it means exact string match was used for matching
+    # If judge is NaN, it means exact string match was used for matching.
     df_matches = df_matches[
         (df_matches["judge"] == model_name) | (df_matches["judge"].isna())
     ]
@@ -341,7 +345,9 @@ def cli_main() -> None:
             eval_data_root = repo_root / "pbench_out"
             registry_data_path = eval_data_root / "registry_data.json"
             if not (registry_data_path.exists() and registry_data_path.is_file()):
-                raise RuntimeError(f"We seem to be missing the registry data... we expect a JSON with the paper refnos to exist at: {registry_data_path.absolute()}")
+                raise RuntimeError(
+                    f"We seem to be missing the registry data... we expect a JSON with the paper refnos to exist at: {registry_data_path.absolute()}"
+                )
             registry_data = json.loads(Path(registry_data_path).read_text())
             assert isinstance(registry_data, list)
             eval_subset = registry_data[0]["tasks"]
@@ -358,21 +364,25 @@ def cli_main() -> None:
             expected = set(refnos)
             missing = expected - hits
             if missing:
-                raise ValueError(f"You are missing {len(missing)} paper(s). Re-run extraction for: {missing}")
+                raise ValueError(
+                    f"You are missing {len(missing)} paper(s). Re-run extraction for: {missing}"
+                )
 
             del df_matches["refno_normed"]
             num_rows_after_filtering = df_matches.shape[0]
             trials_lookup = {
                 ("chemdataextractor", "supermat_eval"): df_matches[
-                    (df_matches["agent"] == "chemdataextractor") & 
-                    (df_matches["model"] == "supermat_eval")
+                    (df_matches["agent"] == "chemdataextractor")
+                    & (df_matches["model"] == "supermat_eval")
                 ]["refno"].nunique(),
                 ("grobid", "supermat_eval"): df_matches[
-                    (df_matches["agent"] == "grobid") & 
-                    (df_matches["model"] == "supermat_eval")
+                    (df_matches["agent"] == "grobid")
+                    & (df_matches["model"] == "supermat_eval")
                 ]["refno"].nunique(),
             }
-            print(f"Registry data filter result for {first_n} paper(s): {num_rows_original:,} -> {num_rows_after_filtering:,}")
+            print(
+                f"Registry data filter result for {first_n} paper(s): {num_rows_original:,} -> {num_rows_after_filtering:,}"
+            )
         else:
             trials_lookup = count_zeroshot_trials_per_group(
                 args.output_dir.resolve(),

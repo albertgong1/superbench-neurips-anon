@@ -18,8 +18,6 @@
 # %%
 """Script to create a HuggingFace dataset from the SuperCon dataset.
 
-NOTE: skip the --repo_name argument if you don't want to push to HuggingFace Hub.
-
 Each row contains the following information:
 {
     "refno": "...",
@@ -121,11 +119,9 @@ df_glossary = pd.read_csv(
 df_glossary = df_glossary.reset_index(names="order").set_index("db")
 # create a lookup table for db -> property name
 db_to_property_name_lookup = df_glossary["label"].to_dict()
-# import pdb; pdb.set_trace()
 # load units
 units_path = "property_unit_mappings.csv"
 df_units = pd.read_csv(units_path, index_col=0)
-# import pdb; pdb.set_trace()
 
 # %%
 data_path = args.data_dir / "SuperCon.csv"
@@ -217,7 +213,6 @@ def process_row(row: pd.Series) -> pd.Series:
             elif method_col == "gapmeth":  # method of measuring energy gap
                 method = GAPMETH.get(int(row[method_col]), "")
             elif method_col == "tcmeth":  # TC measurement method
-                # import pdb; pdb.set_trace()
                 method = TC_MEASUREMENT_METHOD.get(int(row[method_col]), "")
             else:
                 method = str(row[method_col])
@@ -225,9 +220,7 @@ def process_row(row: pd.Series) -> pd.Series:
         properties.append(
             {
                 "id": None,  # assigned after grouping by refno
-                "material_or_system": row[
-                    "element"
-                ],  # TODO (Albert): normalize using pymatgen
+                "material_or_system": row["element"],
                 "sample_label": None,
                 "property_name": db_to_property_name_lookup.get(col, col),
                 "category": None,
@@ -294,12 +287,10 @@ if True:
     db_label_values = properties_df["property_name"].map(property_name_to_db)
     property_name_idx = properties_df.columns.get_loc("property_name")
     properties_df.insert(property_name_idx, "db_label", db_label_values)
-    # import pdb; pdb.set_trace()
     # save properties_df to csv
     exploded_save_path = args.output_dir / f"{args.hf_split}_exploded.csv"
     logger.info(f"Saving exploded dataset to {exploded_save_path}...")
     properties_df.to_csv(exploded_save_path, index=False)
-    # exit(0)
 
 dataset = Dataset.from_pandas(df)
 dataset.save_to_disk(args.output_dir / f"{args.hf_split}")
@@ -324,8 +315,6 @@ if args.hf_repo is not None:
     logger.info(f"Pushing dataset to HuggingFace Hub: {args.hf_repo}...")
     logger.info(f"Uploading {len(df)} rows...")
     dataset = Dataset.from_pandas(df)
-    # Note: If schema changes, you may need to delete existing data first:
-    # huggingface_hub.HfApi().delete_folder(repo_id=args.hf_repo, path_in_repo="data", repo_type="dataset")
     dataset.push_to_hub(args.hf_repo, private=False, split=args.hf_split)
     logger.info(f"✓ All {len(df)} rows pushed to {args.hf_repo}")
 
